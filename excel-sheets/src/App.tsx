@@ -1,13 +1,8 @@
 import { useState } from 'react';
 import * as XLSX from 'xlsx';
 import DataTable from './components/DataTable';
-import {
-  Container,
-  Button,
-  FormControl,
-  Typography,
-  Input,
-} from '@mui/material';
+import { Container, Typography, Grid } from '@mui/material';
+import Form from './components/Form';
 
 function App() {
   const [excelFile, setExcelFile] = useState<string | null>(null);
@@ -51,36 +46,46 @@ function App() {
   };
 
   return (
-    <Container
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-        height: '100%',
-        width: '100%',
-        scrollBehavior: 'smooth',
-      }}
-    >
-      <Typography variant='h2'>Upload & View Excel Sheets</Typography>
-      <form onSubmit={handleFileSubmit}>
-        <Input type='file' required onChange={handleFile} />
-        <Button type='submit' className='btn btn-success btn-md'>
-          UPLOAD
-        </Button>
-        {typeError && (
-          <div className='alert alert-danger' role='alert'>
-            {typeError}
+    <Container>
+      <Grid
+        direction='column'
+        justifyContent='center'
+        alignItems='center'
+        height={'50%'}
+        width={'100%'}
+        padding={'2rem 0 0 0'}
+        margin={'1rem 0 2rem 0 '}
+      >
+        <Grid item height={'50%'}>
+          <Typography variant='h3' padding={'1rem 0'}>
+            Upload & View Excel Sheets
+          </Typography>
+        </Grid>
+        <Grid item>
+          <Form
+            onSubmit={handleFileSubmit}
+            handleFile={handleFile}
+            typeError={typeError}
+          />
+        </Grid>
+      </Grid>
+      <Grid
+        direction='column'
+        justifyContent='center'
+        alignItems='center'
+        height={'100%'}
+        width={'100%'}
+      >
+        <Grid item>
+          <div className='viewer'>
+            {excelData ? (
+              <DataTable salesData={excelData} />
+            ) : (
+              <div>No File is uploaded yet!</div>
+            )}
           </div>
-        )}
-      </form>
-      <div className='viewer'>
-        {excelData ? (
-          <DataTable salesData={excelData} />
-        ) : (
-          <div>No File is uploaded yet!</div>
-        )}
-      </div>
+        </Grid>
+      </Grid>
     </Container>
   );
 }

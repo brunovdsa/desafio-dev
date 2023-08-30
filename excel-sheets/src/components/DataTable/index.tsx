@@ -28,25 +28,25 @@ export default function DataTable(props: DataTableProps) {
     {
       field: 'cliente',
       headerName: 'Cliente',
-      width: 180,
+      width: 80,
       editable: true,
     },
     {
       field: 'idade',
       headerName: 'Idade',
-      width: 180,
+      width: 80,
       editable: true,
     },
     {
       field: 'estado',
       headerName: 'Estado',
-      width: 180,
+      width: 150,
       editable: true,
     },
     {
       field: 'produto',
       headerName: 'Produto',
-      width: 180,
+      width: 80,
       editable: true,
     },
 
@@ -96,7 +96,7 @@ export default function DataTable(props: DataTableProps) {
     <Container
       sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
     >
-      <div style={{ height: 300, width: '100%' }}>
+      <div style={{ height: 600, width: '100%' }}>
         <DataGrid
           columns={columns}
           rows={rows}
