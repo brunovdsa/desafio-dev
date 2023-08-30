@@ -1,5 +1,13 @@
-import { Key, useState } from 'react';
+import { useState } from 'react';
 import * as XLSX from 'xlsx';
+import DataTable from './components/DataTable';
+import {
+  Container,
+  Button,
+  FormControl,
+  Typography,
+  Input,
+} from '@mui/material';
 
 function App() {
   const [excelFile, setExcelFile] = useState<string | null>(null);
@@ -7,16 +15,16 @@ function App() {
   const [excelData, setExcelData] = useState<Array<string> | null>(null);
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let fileTypes = [
+    let fileTypes: string[] = [
       'application/vnd.ms-excel',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
       'text/csv',
     ];
-    let selectedFile = e.target.files?.[0] || null;
+    let selectedFile: File | null = e.target.files?.[0] || null;
     if (selectedFile) {
       if (selectedFile && fileTypes.includes(selectedFile.type)) {
         setTypeError(null);
-        let reader = new FileReader();
+        let reader: FileReader = new FileReader();
         reader.readAsArrayBuffer(selectedFile);
         reader.onload = (e: any) => {
           setExcelFile(e.target.result);
@@ -34,26 +42,32 @@ function App() {
     e.preventDefault();
     if (excelFile !== null) {
       const workbook: XLSX.WorkBook = XLSX.read(excelFile, { type: 'buffer' });
-      const worksheetName: string = workbook.SheetNames[0];
-      const worksheet: XLSX.WorkSheet = workbook.Sheets[worksheetName];
-      const data: XLSX.WorkSheet = XLSX.utils.sheet_to_json(worksheet);
-      setExcelData(data.slice(0, 10));
+      const salesWorksheetName: string = workbook.SheetNames[0];
+      const salesWorksheet: XLSX.WorkSheet =
+        workbook.Sheets[salesWorksheetName];
+      const data: Array<string> = XLSX.utils.sheet_to_json(salesWorksheet);
+      setExcelData(data);
     }
   };
 
   return (
-    <div className='wrapper'>
-      <h3>Upload & View Excel Sheets</h3>
-      <form className='form-group custom-form' onSubmit={handleFileSubmit}>
-        <input
-          type='file'
-          className='form-control'
-          required
-          onChange={handleFile}
-        />
-        <button type='submit' className='btn btn-success btn-md'>
+    <Container
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column',
+        height: '100%',
+        width: '100%',
+        scrollBehavior: 'smooth',
+      }}
+    >
+      <Typography variant='h2'>Upload & View Excel Sheets</Typography>
+      <form onSubmit={handleFileSubmit}>
+        <Input type='file' required onChange={handleFile} />
+        <Button type='submit' className='btn btn-success btn-md'>
           UPLOAD
-        </button>
+        </Button>
         {typeError && (
           <div className='alert alert-danger' role='alert'>
             {typeError}
@@ -62,33 +76,12 @@ function App() {
       </form>
       <div className='viewer'>
         {excelData ? (
-          <div className='table-responsive'>
-            <table className='table'>
-              <thead>
-                <tr>
-                  {Object.keys(excelData[0]).map((key) => (
-                    <th key={key}>{key}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {excelData.map(
-                  (individualExcelData: any, index: Key | null | undefined) => (
-                    <tr key={index}>
-                      {Object.keys(individualExcelData).map((key) => (
-                        <td key={key}>{individualExcelData[key]}</td>
-                      ))}
-                    </tr>
-                  )
-                )}
-              </tbody>
-            </table>
-          </div>
+          <DataTable salesData={excelData} />
         ) : (
           <div>No File is uploaded yet!</div>
         )}
       </div>
-    </div>
+    </Container>
   );
 }
 
