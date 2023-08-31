@@ -1,9 +1,10 @@
-import { Container } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import {
   DataGrid,
   GridColDef,
   GridRowsProp,
-  GridToolbar,
+  GridToolbarContainer,
+  GridToolbarExport,
 } from '@mui/x-data-grid';
 import { useState } from 'react';
 import * as XLSX from 'xlsx';
@@ -12,17 +13,15 @@ interface DataTableProps {
   salesData: XLSX.WorkSheet;
 }
 
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport includeColumnGroupsHeaders />
+    </GridToolbarContainer>
+  );
+}
 export default function DataTable(props: DataTableProps) {
   const [salesData] = useState<any>(props.salesData);
-
-  var numberOfSales = salesData.map((row: any) => row.QUANTIDADE_VENDIDA);
-
-  var sum = 0;
-
-  for (var i = 0; i < numberOfSales.length; i++) {
-    sum += numberOfSales[i];
-  }
-  console.log(sum);
 
   const columns: GridColDef[] = [
     {
@@ -92,15 +91,44 @@ export default function DataTable(props: DataTableProps) {
     data: row.DATA,
   }));
 
+  function CustomFooter() {
+    var numberOfSales = salesData.map(
+      (row: any) => (numberOfSales = row.QUANTIDADE_VENDIDA)
+    );
+    var sum = 0;
+
+    for (var i = 0; i < numberOfSales.length; i++) {
+      sum += numberOfSales[i];
+    }
+    return (
+      <Box sx={{ p: 1, display: 'flex' }}>
+        <Typography variant='body1'>{`Total de vendas: ${sum}`}</Typography>
+      </Box>
+    );
+  }
   return (
     <Container
-      sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
     >
-      <div style={{ height: 600, width: '100%' }}>
+      <div
+        style={{
+          height: 600,
+          width: '100%',
+          borderRadius: '10px',
+          boxShadow: '0px 5px 10px rgba(0, 0, 0, 0.1)',
+        }}
+      >
         <DataGrid
           columns={columns}
           rows={rows}
-          slots={{ toolbar: GridToolbar }}
+          slots={{
+            toolbar: CustomToolbar,
+            footer: CustomFooter,
+          }}
         />
       </div>
     </Container>

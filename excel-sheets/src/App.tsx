@@ -40,7 +40,9 @@ function App() {
       const salesWorksheetName: string = workbook.SheetNames[0];
       const salesWorksheet: XLSX.WorkSheet =
         workbook.Sheets[salesWorksheetName];
-      const data: Array<string> = XLSX.utils.sheet_to_json(salesWorksheet);
+      const data: Array<string> = XLSX.utils.sheet_to_json(salesWorksheet, {
+        dateNF: 'yyyy-mm-dd',
+      });
       setExcelData(data);
     }
   };
@@ -48,7 +50,6 @@ function App() {
   return (
     <Container>
       <Grid
-        direction='column'
         justifyContent='center'
         alignItems='center'
         height={'50%'}
@@ -70,7 +71,6 @@ function App() {
         </Grid>
       </Grid>
       <Grid
-        direction='column'
         justifyContent='center'
         alignItems='center'
         height={'100%'}
